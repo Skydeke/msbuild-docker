@@ -76,11 +76,11 @@ RUN wget -q https://download.visualstudio.microsoft.com/download/pr/cc9263cb-976
     rm -rf ${HOME}/.cache/* /tmp/*
 
 ## install .NET Framework 4.5.2 developer/targeting pack
-RUN wget -q "https://download.microsoft.com/download/4/3/B/43B61315-B2CE-4F5B-9E32-34CCA07B2F0E/NDP452-KB2901951-x86-x64-DevPack.exe" -O /tmp/x86-x64-DevPack.exe && \
-    winecfg -v win7 && \
-    xvfb-run -a wine /tmp/x86-x64-DevPack.exe /q /norestart /repair && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+#RUN wget -q "https://download.microsoft.com/download/4/3/B/43B61315-B2CE-4F5B-9E32-34CCA07B2F0E/NDP452-KB2901951-x86-x64-DevPack.exe" -O /tmp/x86-x64-DevPack.exe && \
+#    winecfg -v win7 && \
+#    xvfb-run -a wine /tmp/x86-x64-DevPack.exe /q /norestart /repair && \
+#    (wineserver --kill || true) && \
+#    rm -rf ${HOME}/.cache/* /tmp/*
 
 # install .NET Framework 4.5 devel/targeting pack from win8 sdk
 RUN export WINEDEBUG="-all" && \
