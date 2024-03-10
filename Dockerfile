@@ -51,10 +51,10 @@ RUN export WINEDEBUG="-all" && \
     rm -rf ${HOME}/.cache/* /tmp/*
 
 # install dotnet 3.5
-RUN export WINEDEBUG="-all" && \
-    xvfb-run -a winetricks --force --unattended dotnet35 && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+#RUN export WINEDEBUG="-all" && \
+#    xvfb-run -a winetricks --force --unattended dotnet35 && \
+#    (wineserver --kill || true) && \
+#    rm -rf ${HOME}/.cache/* /tmp/*
 
 # install dotnet 4.8
 RUN export WINEDEBUG="-all" && \
@@ -70,10 +70,10 @@ RUN export WINEDEBUG="-all" && \
     rm -rf ${HOME}/.cache/* /tmp/*
 
 ## install .NET 5.0 SDK
-RUN wget -q https://download.visualstudio.microsoft.com/download/pr/cc9263cb-9764-4d34-a792-054bebe3abed/08c84422ab3dfdbf53f8cc03f84e06be/dotnet-sdk-5.0.407-win-x64.exe -O /tmp/dotnet-sdk-5.0.407-win-x64.exe && \
-    xvfb-run -a wine /tmp/dotnet-sdk-5.0.407-win-x64.exe /q /norestart && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+#RUN wget -q https://download.visualstudio.microsoft.com/download/pr/cc9263cb-9764-4d34-a792-054bebe3abed/08c84422ab3dfdbf53f8cc03f84e06be/dotnet-sdk-5.0.407-win-x64.exe -O /tmp/dotnet-sdk-5.0.407-win-x64.exe && \
+#    xvfb-run -a wine /tmp/dotnet-sdk-5.0.407-win-x64.exe /q /norestart && \
+#    (wineserver --kill || true) && \
+#    rm -rf ${HOME}/.cache/* /tmp/*
 
 ## install .NET Framework 4.5.2 developer/targeting pack
 #RUN wget -q "https://download.microsoft.com/download/4/3/B/43B61315-B2CE-4F5B-9E32-34CCA07B2F0E/NDP452-KB2901951-x86-x64-DevPack.exe" -O /tmp/x86-x64-DevPack.exe && \
@@ -83,11 +83,11 @@ RUN wget -q https://download.visualstudio.microsoft.com/download/pr/cc9263cb-976
 #    rm -rf ${HOME}/.cache/* /tmp/*
 
 # install .NET Framework 4.5 devel/targeting pack from win8 sdk
-RUN export WINEDEBUG="-all" && \
-    wget -q "https://go.microsoft.com/fwlink/p/?LinkId=226658" -O /tmp/win8sdk.exe && \
-    xvfb-run -a wine /tmp/win8sdk.exe /q /norestart && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+#RUN export WINEDEBUG="-all" && \
+#    wget -q "https://go.microsoft.com/fwlink/p/?LinkId=226658" -O /tmp/win8sdk.exe && \
+#    xvfb-run -a wine /tmp/win8sdk.exe /q /norestart && \
+#    (wineserver --kill || true) && \
+#    rm -rf ${HOME}/.cache/* /tmp/*
 
 # copy buildtools into container
 COPY --chown=${USER_ID}:${GROUP_ID} vs_buildtools /opt/msbuild/vs_buildtools
