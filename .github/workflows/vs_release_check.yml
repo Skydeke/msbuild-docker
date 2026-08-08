@@ -21,7 +21,8 @@ jobs:
             }
             function check-vs-release {
                 LATEST_RELEASE=$(get-latest-vs-release $1)
-                docker manifest inspect ghcr.io/skydeke/msbuild-docker:$LATEST_RELEASE > /dev/null
+                RELEASE_TAG=$(echo $LATEST_RELEASE | tr -cd 'a-zA-Z0-9._-')
+                docker manifest inspect ghcr.io/skydeke/msbuild-docker:$RELEASE_TAG > /dev/null
                 if [ $? -ne 0 ];
                 then
                     # new release detected, trigger build action
