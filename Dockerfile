@@ -1,5 +1,5 @@
 # build arguments
-ARG UBUNTU_VERSION="20.04"
+ARG UBUNTU_VERSION="26.04"
 ARG USER_ID
 ARG GROUP_ID
 ARG SOLUTION_DIR
@@ -15,40 +15,40 @@ ENV SOLUTION_DIR=${SOLUTION_DIR:-/src}
 
 # install available updates, add the wine repository and install the required packages
 RUN apt-get update && \
-    apt-get full-upgrade --yes && \
-    apt-get install --yes wget software-properties-common xvfb && \
-    dpkg --add-architecture i386 && \
-    wget -qO- https://dl.winehq.org/wine-builds/winehq.key | apt-key add - && \
-    apt-add-repository "deb http://dl.winehq.org/wine-builds/ubuntu/ $(lsb_release -cs) main" && \
-    apt-get update && \
-    apt-get install --install-recommends --yes winehq-stable winbind cabextract && \
-    wget -q https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/bin/winetricks && \
-    chmod +x /usr/bin/winetricks && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  apt-get full-upgrade --yes && \
+  apt-get install --yes wget software-properties-common xvfb && \
+  dpkg --add-architecture i386 && \
+  wget -qO- https://dl.winehq.org/wine-builds/winehq.key | apt-key add - && \
+  apt-add-repository "deb http://dl.winehq.org/wine-builds/ubuntu/ $(lsb_release -cs) main" && \
+  apt-get update && \
+  apt-get install --install-recommends --yes winehq-stable winbind cabextract && \
+  wget -q https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/bin/winetricks && \
+  chmod +x /usr/bin/winetricks && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # create a new user called runner (running things as root is not necessary at this point anymore), create the src folder and give the user full permission to that folder
 RUN groupadd --gid ${GROUP_ID} runner && \
-    useradd --create-home --uid ${USER_ID} --gid ${GROUP_ID} runner && \
-    mkdir /src && \
-    chown -R ${USER_ID}:${GROUP_ID} /src && \
-    mkdir /opt/msbuild && \
-    chown -R ${USER_ID}:${GROUP_ID} /opt/msbuild
+  useradd --create-home --uid ${USER_ID} --gid ${GROUP_ID} runner && \
+  mkdir /src && \
+  chown -R ${USER_ID}:${GROUP_ID} /src && \
+  mkdir /opt/msbuild && \
+  chown -R ${USER_ID}:${GROUP_ID} /opt/msbuild
 USER runner
 
 # install Windows SDK
 # Initialize the wine environment. Wait until the wineserver process has
 # exited before closing the session, to avoid corrupting the wine prefix.
 RUN export WINEDLLOVERRIDES="mscoree=" && \
-    xvfb-run -a wineboot --init && \
-    while pgrep wineserver > /dev/null; do sleep 1; done && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+  xvfb-run -a wineboot --init && \
+  while pgrep wineserver > /dev/null; do sleep 1; done && \
+  rm -rf ${HOME}/.cache/* /tmp/*
 
 # Set to win10
 RUN export WINEDEBUG="-all" && \
-    xvfb-run -a winetricks --force --unattended win10 && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+  xvfb-run -a winetricks --force --unattended win10 && \
+  (wineserver --kill || true) && \
+  rm -rf ${HOME}/.cache/* /tmp/*
 
 # install dotnet 3.5
 #RUN export WINEDEBUG="-all" && \
@@ -58,16 +58,16 @@ RUN export WINEDEBUG="-all" && \
 
 # install dotnet 4.8
 RUN export WINEDEBUG="-all" && \
-    xvfb-run -a winetricks --force --unattended dotnet48 && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+  xvfb-run -a winetricks --force --unattended dotnet48 && \
+  (wineserver --kill || true) && \
+  rm -rf ${HOME}/.cache/* /tmp/*
 
 # download and install the Windows SDK for Windows 11 (10.0.28000.2526), Juli 2026
 RUN export WINEDEBUG="-all" && \
-    wget -q "https://go.microsoft.com/fwlink/?linkid=2372508" -O /tmp/winsdksetup.exe && \
-    xvfb-run -a wine64 /tmp/winsdksetup.exe /norestart /q /installpath "Z:\\opt\\msbuild\\winsdk" && \
-    (wineserver --kill || true) && \
-    rm -rf ${HOME}/.cache/* /tmp/*
+  wget -q "https://go.microsoft.com/fwlink/?linkid=2372508" -O /tmp/winsdksetup.exe && \
+  xvfb-run -a wine64 /tmp/winsdksetup.exe /norestart /q /installpath "Z:\\opt\\msbuild\\winsdk" && \
+  (wineserver --kill || true) && \
+  rm -rf ${HOME}/.cache/* /tmp/*
 
 ## install .NET 5.0 SDK
 #RUN wget -q https://download.visualstudio.microsoft.com/download/pr/cc9263cb-9764-4d34-a792-054bebe3abed/08c84422ab3dfdbf53f8cc03f84e06be/dotnet-sdk-5.0.407-win-x64.exe -O /tmp/dotnet-sdk-5.0.407-win-x64.exe && \
