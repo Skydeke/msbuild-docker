@@ -15,14 +15,14 @@ jobs:
     steps:
       - name: Install buildtools
         run: |
-          # download buildtools installer
-          Invoke-WebRequest -Uri https://aka.ms/vs/18/stable/vs_BuildTools.exe -OutFile vs_BuildTools.exe
-          
           # set VS_VERSION env variable
           $env:VS_VERSION = ${{ github.event.inputs.vs_version }}
+
+          # download buildtools installer
+          Invoke-WebRequest -Uri https://aka.ms/vs/$env:VS_VERSION/stable/vs_BuildTools.exe -OutFile vs_BuildTools.exe
           
           # download release metadata
-          Invoke-WebRequest -Uri https://aka.ms/vs/$env:VS_VERSION/release/channel -OutFile channel.json
+          Invoke-WebRequest -Uri https://aka.ms/vs/$env:VS_VERSION/stable/channel -OutFile channel.json
           
           # run buildtools installer
           cmd /S /C "start /w vs_BuildTools.exe --channelURI https://aka.ms/vs/%VS_VERSION%/release/channel --nocache --noUpdateInstaller --installPath %cd%\vs_buildtools --addProductLang en-US --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --wait --quiet"
