@@ -62,9 +62,9 @@ RUN export WINEDEBUG="-all" && \
     (wineserver --kill || true) && \
     rm -rf ${HOME}/.cache/* /tmp/*
 
-# download and install the windows 10 17763 SDK
+# download and install the Windows SDK for Windows 11 (10.0.28000.2526), Juli 2026
 RUN export WINEDEBUG="-all" && \
-    wget -q https://go.microsoft.com/fwlink/p/?LinkID=2033908 -O /tmp/winsdksetup.exe && \
+    wget -q "https://go.microsoft.com/fwlink/?linkid=2372508" -O /tmp/winsdksetup.exe && \
     xvfb-run -a wine64 /tmp/winsdksetup.exe /norestart /q /installpath "Z:\\opt\\msbuild\\winsdk" && \
     (wineserver --kill || true) && \
     rm -rf ${HOME}/.cache/* /tmp/*

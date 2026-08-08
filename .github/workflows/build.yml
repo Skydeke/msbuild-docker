@@ -8,7 +8,7 @@ on:
       vs_version:
         type: string
         required: true
-        default: '16'
+        default: '17'
 jobs:
   install_buildtools:
     runs-on: windows-latest
@@ -37,7 +37,7 @@ jobs:
           pathTarget: vs_buildtools.7z
 
       - name: Publish buildtools artifact
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@v4
         with:
           name: BuildTools
           path: vs_buildtools.7z
@@ -47,10 +47,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         
       - name: Download buildtools artifact
-        uses: actions/download-artifact@v3.0.0
+        uses: actions/download-artifact@v4
         with:
           name: BuildTools
           path: vs_buildtools.7z
