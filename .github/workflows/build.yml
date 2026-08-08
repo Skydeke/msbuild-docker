@@ -16,7 +16,7 @@ jobs:
       - name: Install buildtools
         run: |
           # download buildtools installer
-          Invoke-WebRequest -Uri https://aka.ms/vs/17/release/vs_BuildTools.exe -OutFile vs_BuildTools.exe
+          Invoke-WebRequest -Uri https://aka.ms/vs/18/stable/vs_BuildTools.exe -OutFile vs_BuildTools.exe
           
           # set VS_VERSION env variable
           $env:VS_VERSION = ${{ github.event.inputs.vs_version }}
