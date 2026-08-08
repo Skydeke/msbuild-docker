@@ -1,17 +1,22 @@
 # build arguments
 ARG UBUNTU_VERSION="26.04"
+ARG USER_ID="1000"
+ARG GROUP_ID="1000"
+ARG SOLUTION_DIR="/src"
+
+FROM ubuntu:${UBUNTU_VERSION}
+
+# re-declare args so they stay in scope for the rest of the build
 ARG USER_ID
 ARG GROUP_ID
 ARG SOLUTION_DIR
 
-FROM ubuntu:${UBUNTU_VERSION}
-
 # environment variables
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
-ENV USER_ID=${USER_ID:-1000}
-ENV GROUP_ID=${GROUP_ID:-1000}
-ENV SOLUTION_DIR=${SOLUTION_DIR:-/src}
+ENV USER_ID=${USER_ID}
+ENV GROUP_ID=${GROUP_ID}
+ENV SOLUTION_DIR=${SOLUTION_DIR}
 
 # install available updates, add the wine repository and install the required packages
 RUN apt-get update && \
@@ -29,8 +34,9 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # create a new user called runner (running things as root is not necessary at this point anymore), create the src folder and give the user full permission to that folder
-RUN groupadd --gid ${GROUP_ID} runner && \
-  useradd --create-home --uid ${USER_ID} --gid ${GROUP_ID} runner && \
+# --non-unique: the base image may already have a group/user with this GID/UID (e.g. 1000), so allow reusing it
+RUN groupadd --gid ${GROUP_ID} --non-unique runner && \
+  useradd --create-home --uid ${USER_ID} --gid ${GROUP_ID} --non-unique runner && \
   mkdir /src && \
   chown -R ${USER_ID}:${GROUP_ID} /src && \
   mkdir /opt/msbuild && \
