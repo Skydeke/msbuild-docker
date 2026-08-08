@@ -8,7 +8,26 @@ if [ ! -d "${SOLUTION_DIR}" ]; then
     mkdir -p "${SOLUTION_DIR}"
 fi
 
+# Newer wine cmd.exe no longer executes commands chained with "&&" after a batch
+# file is run on the `cmd /c` command line: the chain silently stops once
+# VsDevCmd.bat finishes, so msbuild never runs. Work around this by generating a
+# small batch script that CALLS VsDevCmd.bat (guaranteeing control returns) and
+# then runs the requested command as a plain sequential line.
+# The MSBuild bin dir is also explicitly prepended to the PATH because wine's
+# VsDevCmd.bat may not add it.
+BAT="/tmp/.vs_cmd_run.bat"
+cat > "${BAT}" <<'EOF'
+@echo off
+call "Z:\opt\msbuild\vs_buildtools\Common7\Tools\VsDevCmd.bat"
+set "PATH=Z:\opt\msbuild\vs_buildtools\MSBuild\Current\Bin;Z:\opt\msbuild\vs_buildtools\MSBuild\Current\Bin\amd64;%PATH%"
+cd /d %SOLUTION_DIR%
+%*
+EOF
+sed -i 's/$/\r/' "${BAT}"
+
 # spawn vs dev shell & execute commands
 pushd "${SOLUTION_DIR}" > /dev/null
-WINEDEBUG=-all wine cmd /c "/opt/msbuild/vs_buildtools/Common7/Tools/VsDevCmd.bat && cd /d %SOLUTION_DIR% && $*"
+WINEDEBUG=-all wine cmd /c "Z:\\tmp\\.vs_cmd_run.bat $*"
 popd > /dev/null
+
+rm -f "${BAT}"
