@@ -16,10 +16,11 @@ ENV SOLUTION_DIR=${SOLUTION_DIR:-/src}
 # install available updates, add the wine repository and install the required packages
 RUN apt-get update && \
   apt-get full-upgrade --yes && \
-  apt-get install --yes wget software-properties-common xvfb && \
+  apt-get install --yes wget gpg xvfb && \
   dpkg --add-architecture i386 && \
-  wget -qO- https://dl.winehq.org/wine-builds/winehq.key | apt-key add - && \
-  apt-add-repository "deb http://dl.winehq.org/wine-builds/ubuntu/ $(lsb_release -cs) main" && \
+  install -m 0755 -d /etc/apt/keyrings && \
+  wget -qO- https://dl.winehq.org/wine-builds/winehq.key | gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key && \
+  . /etc/os-release && echo "deb [signed-by=/etc/apt/keyrings/winehq-archive.key] https://dl.winehq.org/wine-builds/ubuntu/ ${VERSION_CODENAME} main" > /etc/apt/sources.list.d/winehq.list && \
   apt-get update && \
   apt-get install --install-recommends --yes winehq-stable winbind cabextract && \
   wget -q https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks -O /usr/bin/winetricks && \
